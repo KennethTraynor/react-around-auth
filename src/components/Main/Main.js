@@ -7,6 +7,7 @@ function Main({ handleEditAvatarClick, handleEditProfileClick, handleAddPlaceCli
   const [userName, setUserName] = React.useState('');
   const [userDescription, setUserDescription] = React.useState('');
   const [userAvatar, setUserAvatar] = React.useState('');
+  const [userId, setUserId] = React.useState('');
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
@@ -15,6 +16,7 @@ function Main({ handleEditAvatarClick, handleEditProfileClick, handleAddPlaceCli
         setUserName(res.name);
         setUserDescription(res.about);
         setUserAvatar(res.avatar);
+        setUserId(res._id);
       })
       .then(() => api.getInitialCards())
       .then((res) => {
@@ -56,7 +58,7 @@ function Main({ handleEditAvatarClick, handleEditProfileClick, handleAddPlaceCli
 
       <section className='elements'>
         <ul className='elements__container'>
-          {cards.map((card) => <Card key={card.id} card={card} onCardClick={onCardClick} /> )}
+          {cards.map((card) => <Card key={card.id} card={card} onCardClick={onCardClick} userId={userId} /> )}
         </ul>
 
       </section>
