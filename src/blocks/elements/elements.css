@@ -1,0 +1,7 @@
+@import url(__container/elements__container.css);
+
+.elements {
+  margin: 50px auto 0 auto;
+  max-width: 880px;
+  width: 100%;
+}

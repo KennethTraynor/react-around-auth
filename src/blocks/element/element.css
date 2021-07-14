@@ -1,0 +1,20 @@
+@import url(__image/element__image.css);
+@import url(__text-row/element__text-row.css);
+@import url(__text/element__text.css);
+@import url(__like-button/element__like-button.css);
+@import url(__delete-button/element__delete-button.css);
+@import url(__like-button/_active/element__like-button_active.css);
+@import url(__like-container/element__like-container.css);
+@import url(__like-count/element__like-count.css);
+
+
+.element {
+  border-radius: 10px;
+  min-width: 282px;
+  height: 361px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}

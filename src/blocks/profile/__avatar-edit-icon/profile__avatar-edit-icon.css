@@ -1,0 +1,11 @@
+.profile__avatar-edit-icon {
+  margin: auto;
+  padding: 0;
+  max-height: 26px;
+  max-width: 26px;
+  height: 100%;
+  width: 100%;
+  background-image: url('../../../images/edit-icon.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}

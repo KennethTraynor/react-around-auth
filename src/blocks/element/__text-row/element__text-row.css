@@ -1,0 +1,8 @@
+.element__text-row {
+  display: flex;
+  flex-direction: row;
+  max-height: 79px;
+  height: 100%;
+  background-color: white;
+  z-index: 1;
+}
