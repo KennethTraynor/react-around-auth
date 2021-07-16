@@ -1,0 +1,23 @@
+.member-form__input {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16.94px;
+    width: 100%;
+    min-height: 27px;
+    padding: 0;
+    margin: 0 auto 30px auto;
+    color: white;
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+    background-color: transparent;
+    border-bottom: solid 1px white;
+}
+
+.member-form__input:last-child {
+    margin-bottom: 0;
+}
+
+.member-form__input::placeholder {
+    color: #cccccc;
+  }

@@ -1,0 +1,15 @@
+.member-form__bottom-link {
+    margin: 0 auto 0 auto;
+    padding: 0;
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.94px;
+    text-align: center;
+    transition: opacity .2s ease-in-out;
+    text-decoration: none;
+}
+
+.member-form__bottom-link:hover {
+    opacity: 60%;
+}

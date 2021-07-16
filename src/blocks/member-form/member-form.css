@@ -1,0 +1,12 @@
+@import url(./__title/member-form__title.css);
+@import url(./__input/member-form__input.css);
+@import url(./__submit-button/member-form__submit-button.css);
+@import url(./__bottom-link/member-form__bottom-link.css);
+@import url(__container/member-form__container.css);
+
+.member-form {
+    margin: 60px 0 0 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+}

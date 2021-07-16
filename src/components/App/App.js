@@ -25,6 +25,7 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [userData, setUserData] = React.useState({});
 
+
   useEffect(() => {
     tokenCheck();
   }, []);
@@ -94,7 +95,7 @@ function App() {
     <div className='page'>
       <Header loggedIn={loggedIn} />
       <Switch>
-        <ProtectedRoute exact path='/' loggedIn={true} component={Main}/>
+        <ProtectedRoute exact path='/' loggedIn={loggedIn} component={Main}/>
         <Route path='/signup'><Register /></Route>
         <Route path='/signin'><Login /></Route>
         <Route>
