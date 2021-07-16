@@ -1,13 +1,9 @@
-function ImagePopup({onClose, card, isOpen}) {
+import React from "react";
 
-    function handleBackgroundClick(e) {
-        if (e.target.classList.contains('popup')) {
-            onClose();
-        }
-    }
+function ImagePopup({ onClose, card, isOpen, onPopupBackgroundClick }) {
 
     return (
-        <div className={`popup popup_type_preview ${isOpen ? 'popup_opened' : ''}`} onClick={handleBackgroundClick}>
+        <div className={`popup popup_type_preview ${isOpen ? 'popup_opened' : ''}`} onClick={onPopupBackgroundClick}>
             <div className='popup__container popup__container_type_preview'>
                 <button className='popup__close-button' aria-label='close' name='close' type='button' onClick={onClose} ></button>
                 <div className='preview-image'>

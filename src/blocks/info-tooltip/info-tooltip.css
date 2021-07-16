@@ -1,0 +1,9 @@
+@import url(__icon/info-tooltip__icon.css);
+@import url(__icon/_type/info-tooltip__icon_type_success.css);
+@import url(__icon/_type/info-tooltip__icon_type_failure.css);
+@import url(__message/info-tooltip__message.css);
+
+.info-tooltip {
+    margin: auto;
+    padding: 0;
+}

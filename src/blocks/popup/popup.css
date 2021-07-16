@@ -11,8 +11,11 @@
 @import url(__field/popup__field.css);
 @import url(__button/_type/popup__button_type_confirm.css);
 @import url(__title/_type/popup__title_type_confirm.css);
+@import url(__close-button/__type/popup__close-button_type_info.css);
 
 .popup {
+  margin: 0;
+  padding: 0;
   display: flex;
   background-color: rgba(0, 0, 0, 0.5);
   height: 100%;
