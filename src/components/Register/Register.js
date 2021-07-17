@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Register({ onRegister, setCurrentPageType }) {
@@ -6,7 +6,7 @@ function Register({ onRegister, setCurrentPageType }) {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
 
-    React.useEffect(() => {
+    useEffect(() => {
         setCurrentPageType('signup');
     }, []);
 

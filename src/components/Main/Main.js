@@ -2,7 +2,7 @@ import React from 'react';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext.js';
 import Card from '../Card/Card';
 
-function Main({ handleEditAvatarClick, handleEditProfileClick, handleAddPlaceClick, onCardClick, cards }) {
+function Main({ handleEditAvatarClick, handleEditProfileClick, handleAddPlaceClick, onCardClick, onCardLikeClick, onCardDeleteClick, cards }) {
 
   const value = React.useContext(CurrentUserContext);
 
@@ -33,7 +33,7 @@ function Main({ handleEditAvatarClick, handleEditProfileClick, handleAddPlaceCli
 
       <section className='elements'>
         <ul className='elements__container'>
-          {cards.map((card) => <Card key={card.id} card={card} onCardClick={onCardClick} /> )}
+          {cards.map((card) => <Card key={card.id} card={card} onCardClick={onCardClick} onCardLikeClick={onCardLikeClick} onCardDeleteClick={onCardDeleteClick} /> )}
         </ul>
 
       </section>

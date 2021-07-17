@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PopupWithForm from "../PopupWithForm/PopupWithForm";
 
 function AddPlacePopup({isOpen, onClose, onPopupBackgroundClick, handleAddPlace}) {
@@ -7,7 +7,7 @@ function AddPlacePopup({isOpen, onClose, onPopupBackgroundClick, handleAddPlace}
     const [url, setUrl] = React.useState('');
 
 
-    React.useEffect(() => {
+    useEffect(() => {
         resetForm();
     }, [isOpen])
 

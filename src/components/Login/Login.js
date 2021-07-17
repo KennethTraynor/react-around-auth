@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function Login({ onLogin, setCurrentPageType }) {
@@ -6,7 +6,7 @@ function Login({ onLogin, setCurrentPageType }) {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
 
-    React.useEffect(() => {
+    useEffect(() => {
         setCurrentPageType('signin');
     }, []);
 

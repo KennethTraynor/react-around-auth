@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
 import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
-import Footer from '../Footer/Footer';
 import PopupWithForm from '../PopupWithForm/PopupWithForm';
 import ImagePopup from '../ImagePopup/ImagePopup';
-import InfoTooltip from '../InfoTooltip/InfoTooltip';
-import * as auth from '../../auth';
-import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
-import Login from '../Login/Login';
-import Register from '../Register/Register';
-import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import AddPlacePopup from '../AddPlacePopup/AddPlacePopup';
 import EditAvatarPopup from '../EditAvatarPopup/EditAvatarPopup';
 import EditProfilePopup from '../EditProfilePopup/EditProfilePopup';
+import Footer from '../Footer/Footer';
+import Login from '../Login/Login';
+import Register from '../Register/Register';
+import InfoTooltip from '../InfoTooltip/InfoTooltip';
+import * as auth from '../../auth';
 import api from '../../utils/Api';
 
 function App() {
@@ -62,17 +62,9 @@ function App() {
   const getCards = () => {
     api.getInitialCards()
       .then((res) => {
-        setCards(res.map(item => ({
-          createdAt: item.createdAt,
-          likes: item.likes,
-          src: item.link,
-          name: item.name,
-          owner: item.owner,
-          id: item._id
-        })))
+        setCards(res.map(item => (createCardElement(item))))
       })
   }
-
 
   const onRegister = (data) => {
     auth.register(data.password, data.email).then((res) => {
@@ -166,17 +158,20 @@ function App() {
     document.addEventListener('keydown', onPopupKeyPress, false);
   }
 
+  const createCardElement = (item) => {
+    return {
+      createdAt: item.createdAt,
+      likes: item.likes,
+      src: item.link,
+      name: item.name,
+      owner: item.owner,
+      id: item._id
+    }
+  }
 
   const handleAddPlace = (data) => {
     api.addCard({ name: data.title, link: data.url }).then(
-      (res) => setCards(cards => [{
-        createdAt: res.createdAt,
-        likes: res.likes,
-        src: res.link,
-        name: res.name,
-        owner: res.owner,
-        id: res._id
-      }, ...cards])
+      (res) => setCards(cards => [createCardElement(res), ...cards])
     )
   }
 
@@ -192,6 +187,24 @@ function App() {
     )
   }
 
+  const onCardLikeClick = (card) => {
+    const liked = card.likes.some((e) => e._id === currentUser.userId);
+    api.updateCardLike({cardID: card.id, like: !liked}).then(
+      (res) => {
+        const newCards = [...cards];
+        const index = cards.indexOf(card);
+        newCards[index] = createCardElement(res);
+        setCards(newCards);
+      }   
+    )
+  }
+
+  const onCardDeleteClick = (card) => {
+    api.deleteCard({cardID: card.id}).then(
+      (res) => setCards(cards.filter(c => c.id !== card.id ))
+    )
+  }
+
   return (
     <div className='page'>
       <CurrentUserContext.Provider value={{ currentUser }}>
@@ -204,6 +217,8 @@ function App() {
             handleEditAvatarClick={onEditAvatar}
             handleEditProfileClick={onEditProfile}
             cards={cards}
+            onCardLikeClick={onCardLikeClick}
+            onCardDeleteClick={onCardDeleteClick}
             component={Main} />
           <Route path='/signup'>
             <Register onRegister={onRegister} setCurrentPageType={setCurrentPageType} />
