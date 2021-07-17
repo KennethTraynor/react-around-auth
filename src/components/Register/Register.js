@@ -11,7 +11,7 @@ function Register({ onRegister, setCurrentPageType }) {
     }, []);
 
     const handleChange = (e) => {
-        const { name, value} = e.target;
+        const { name, value } = e.target;
 
         switch(name) {
             case 'email':

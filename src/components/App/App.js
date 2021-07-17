@@ -10,6 +10,11 @@ import * as auth from '../../auth';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import AddPlacePopup from '../AddPlacePopup/AddPlacePopup';
+import EditAvatarPopup from '../EditAvatarPopup/EditAvatarPopup';
+import EditProfilePopup from '../EditProfilePopup/EditProfilePopup';
+import api from '../../utils/Api';
 
 function App() {
   const history = useHistory();
@@ -21,15 +26,19 @@ function App() {
   const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
 
   const [selectedCard, setSelectedCard] = React.useState({});
-  
+
   const [loggedIn, setLoggedIn] = React.useState(false);
-  
+
   const [infoTooltipMessage, setInfoTooltipMessage] = React.useState('');
   const [infoTooltipStatus, setInfoTooltipStatus] = React.useState('');
   const [isInfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
-  
+
   const [email, setEmail] = React.useState('');
   const [currentPageType, setCurrentPageType] = React.useState('');
+
+  const [currentUser, setCurrentUser] = React.useState({ userName: '', userDescription: '', userAvatar: '', userId: '' });
+
+  const [cards, setCards] = React.useState([]);
 
   useEffect(() => {
     tokenCheck();
@@ -42,18 +51,35 @@ function App() {
         if (res) {
           setLoggedIn(true);
           setEmail(res.data.email);
+          requestUserInfo();
+          getCards();
           history.push('/');
         }
       })
     }
   };
 
+  const getCards = () => {
+    api.getInitialCards()
+      .then((res) => {
+        setCards(res.map(item => ({
+          createdAt: item.createdAt,
+          likes: item.likes,
+          src: item.link,
+          name: item.name,
+          owner: item.owner,
+          id: item._id
+        })))
+      })
+  }
+
+
   const onRegister = (data) => {
     auth.register(data.password, data.email).then((res) => {
       if (!res) {
-        showInfoToolTip('Oops, something went wrong! Please try again.', 'failure');
+        showInfoTooltip('Oops, something went wrong! Please try again.', 'failure');
       } else {
-        showInfoToolTip('Success! You have now been registered.', 'success');
+        showInfoTooltip('Success! You have now been registered.', 'success');
       }
     })
       .catch(err => console.log(err));
@@ -62,7 +88,7 @@ function App() {
   const onLogin = (data) => {
     auth.authorize(data.password, data.email).then((res) => {
       if (!res) {
-        showInfoToolTip('Oops, something went wrong! Please try again.', 'failure');
+        showInfoTooltip('Oops, something went wrong! Please try again.', 'failure');
       }
       if (res.token) {
         setLoggedIn(true);
@@ -79,7 +105,14 @@ function App() {
     history.push('/signin');
   }
 
-  const showInfoToolTip = (message, status) => {
+  const requestUserInfo = () => {
+    api.getUserInfo()
+      .then((res) => {
+        setCurrentUser(currentUser => ({ ...currentUser, userName: res.name, userDescription: res.about, userAvatar: res.avatar, userId: res._id }))
+      })
+  }
+
+  const showInfoTooltip = (message, status) => {
     setInfoTooltipMessage(message);
     setInfoTooltipStatus(status);
     setInfoTooltipOpen(true);
@@ -133,163 +166,71 @@ function App() {
     document.addEventListener('keydown', onPopupKeyPress, false);
   }
 
+
+  const handleAddPlace = (data) => {
+    api.addCard({ name: data.title, link: data.url }).then(
+      (res) => setCards(cards => [{
+        createdAt: res.createdAt,
+        likes: res.likes,
+        src: res.link,
+        name: res.name,
+        owner: res.owner,
+        id: res._id
+      }, ...cards])
+    )
+  }
+
+  const handleUpdateAvatar = (data) => {
+    api.setUserAvatar({ avatar: data.url }).then(
+      (res) => setCurrentUser(currentUser => ({ ...currentUser, userAvatar: res.avatar }))
+    )
+  }
+
+  const handleUpdateProfile = (data) => {
+    api.setUserInfo({ name: data.name, about: data.about }).then(
+      (res) => setCurrentUser(currentUser => ({ ...currentUser, userName: res.name, userDescription: res.about }))
+    )
+  }
+
   return (
     <div className='page'>
-      <Header loggedIn={loggedIn} onSignOut={onSignOut} email={email} currentPageType={currentPageType} />
-      <Switch>
-        <ProtectedRoute exact path='/' 
-          loggedIn={loggedIn}
-          onCardClick={onCardClick}
-          handleAddPlaceClick={onAddPlace}
-          handleEditAvatarClick={onEditAvatar}
-          handleEditProfileClick={onEditProfile}
-          component={Main} />
-        <Route path='/signup'><Register onRegister={onRegister} setCurrentPageType={setCurrentPageType} /></Route>
-        <Route path='/signin'><Login onLogin={onLogin} setCurrentPageType={setCurrentPageType} /></Route>
-        <Route>
-          {loggedIn ? <Redirect to='/' /> : <Redirect to='/signin' />}
-        </Route>
-      </Switch>
-      <Footer />
+      <CurrentUserContext.Provider value={{ currentUser }}>
+        <Header loggedIn={loggedIn} onSignOut={onSignOut} email={email} currentPageType={currentPageType} />
+        <Switch>
+          <ProtectedRoute exact path='/'
+            loggedIn={loggedIn}
+            onCardClick={onCardClick}
+            handleAddPlaceClick={onAddPlace}
+            handleEditAvatarClick={onEditAvatar}
+            handleEditProfileClick={onEditProfile}
+            cards={cards}
+            component={Main} />
+          <Route path='/signup'>
+            <Register onRegister={onRegister} setCurrentPageType={setCurrentPageType} />
+          </Route>
+          <Route path='/signin'>
+            <Login onLogin={onLogin} setCurrentPageType={setCurrentPageType} />
+          </Route>
+          <Route>
+            {loggedIn ? <Redirect to='/' /> : <Redirect to='/signin' />}
+          </Route>
+        </Switch>
+        <Footer />
 
-      <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} onPopupBackgroundClick={onPopupBackgroundClick} />
+        <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} onPopupBackgroundClick={onPopupBackgroundClick} />
 
-      <PopupWithForm name='profile' title='Edit profile' isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick}>
-        <div className='popup__field'>
-          <input id='profile-name' type='text' name='name' className='popup__input popup__input_type_name' placeholder='Name' required minLength='2' maxLength='40' />
-          <span id='profile-name-error' className='popup__error'></span>
-        </div>
+        <PopupWithForm name='confirm' title='Are you sure?' isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} />
 
-        <div className='popup__field'>
-          <input id='profile-about' type='text' name='about' className='popup__input popup__input_type_about' placeholder='About me' required minLength='2' maxLength='200' />
-          <span id='profile-about-error' className='popup__error'></span>
-        </div>
-      </PopupWithForm>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleAddPlace={handleAddPlace} />
 
-      <PopupWithForm name='confirm' title='Are you sure?' isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} />
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleUpdateAvatar={handleUpdateAvatar} />
 
-      <PopupWithForm name='avatar' title='Change profile picture' isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} >
-        <div className='popup__field'>
-          <input id='avatar-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required />
-          <span id='avatar-url-error' className='popup__error'></span>
-        </div>
-      </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleUpdateProfile={handleUpdateProfile} />
 
-      <PopupWithForm name='new-card' title='New Place' isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} >
-        <div className='popup__field'>
-          <input id='card-title' type='text' name='title' className='popup__input popup__input_type_title' placeholder='Title' required minLength='1' maxLength='30' />
-          <span id='card-title-error' className='popup__error'></span>
-        </div>
-
-        <div className='popup__field'>
-          <input id='card-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required />
-          <span id='card-url-error' className='popup__error'></span>
-        </div>
-      </PopupWithForm>
-
-      <InfoTooltip message={infoTooltipMessage} isOpen={isInfoTooltipOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} iconStatus={infoTooltipStatus} ></InfoTooltip>
-
+        <InfoTooltip message={infoTooltipMessage} isOpen={isInfoTooltipOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} iconStatus={infoTooltipStatus} ></InfoTooltip>
+      </CurrentUserContext.Provider>
     </div>
   )
 }
 
 export default App;
-
-  // const onAddPlace = () => {
-  //   addPopupKeyListener();
-  //   setAddPlacePopupOpen(true);
-  // }
-
-  // const onCardClick = (card) => {
-  //   addPopupKeyListener();
-  //   setSelectedCard(card);
-  //   setImagePopupOpen(true);
-  // }
-
-  // const onEditAvatar = () => {
-  //   addPopupKeyListener();
-  //   setEditAvatarPopupOpen(true);
-  // }
-
-  // const onEditProfile = () => {
-  //   addPopupKeyListener();
-  //   setEditProfilePopupOpen(true);
-  // }
-
-  // const closeAllPopups = () => {
-  //   document.removeEventListener('keydown', onPopupKeyPress, false);
-  //   setEditAvatarPopupOpen(false);
-  //   setEditProfilePopupOpen(false);
-  //   setAddPlacePopupOpen(false);
-  //   setImagePopupOpen(false);
-  //   setConfirmPopupOpen(false);
-  //   setInfoTooltipOpen(false);
-  //   setSelectedCard({});
-  // }
-
-  // const onPopupBackgroundClick = (e) => {
-  //   if (e.target.classList.contains('popup')) {
-  //     closeAllPopups();
-  //   }
-  // }
-
-  // const onPopupKeyPress = (e) => {
-  //   if (e.keyCode === 27) {
-  //     closeAllPopups();
-  //   }
-  // };
-
-  // const addPopupKeyListener = () => {
-  //   document.addEventListener('keydown', onPopupKeyPress, false);
-  // }
-
-//   return (
-//     <div className='page'>
-//       <Header />
-
-//       <Main handleEditAvatarClick={onEditAvatar} handleEditProfileClick={onEditProfile} handleAddPlaceClick={onAddPlace} onCardClick={onCardClick} />
-
-//       <Footer />
-
-//       <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} onPopupBackgroundClick={onPopupBackgroundClick} />
-
-//       <PopupWithForm name='profile' title='Edit profile' isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick}>
-//         <div className='popup__field'>
-//           <input id='profile-name' type='text' name='name' className='popup__input popup__input_type_name' placeholder='Name' required minLength='2' maxLength='40' />
-//           <span id='profile-name-error' className='popup__error'></span>
-//         </div>
-
-//         <div className='popup__field'>
-//           <input id='profile-about' type='text' name='about' className='popup__input popup__input_type_about' placeholder='About me' required minLength='2' maxLength='200' />
-//           <span id='profile-about-error' className='popup__error'></span>
-//         </div>
-//       </PopupWithForm>
-
-//       <PopupWithForm name='confirm' title='Are you sure?' isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} />
-
-//       <PopupWithForm name='avatar' title='Change profile picture' isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} >
-//         <div className='popup__field'>
-//           <input id='avatar-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required />
-//           <span id='avatar-url-error' className='popup__error'></span>
-//         </div>
-//       </PopupWithForm>
-
-//       <PopupWithForm name='new-card' title='New Place' isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} >
-//         <div className='popup__field'>
-//           <input id='card-title' type='text' name='title' className='popup__input popup__input_type_title' placeholder='Title' required minLength='1' maxLength='30' />
-//           <span id='card-title-error' className='popup__error'></span>
-//         </div>
-
-//         <div className='popup__field'>
-//           <input id='card-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required />
-//           <span id='card-url-error' className='popup__error'></span>
-//         </div>
-//       </PopupWithForm>
-
-//       <InfoTooltip message='Success! You have now been registered.' isOpen={isInfoTooltipOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} iconStatus='success' ></InfoTooltip>
-
-//     </div>
-
-//   );
-// }
-
