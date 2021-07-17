@@ -18,30 +18,72 @@ function App() {
   const [isConfirmPopupOpen, setConfirmPopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
-  const [isInfoTooltipOpen, setInfoTooltipOpen] = React.useState(true);
   const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
+
   const [selectedCard, setSelectedCard] = React.useState({});
-
+  
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [userData, setUserData] = React.useState({});
-
+  
+  const [infoTooltipMessage, setInfoTooltipMessage] = React.useState('');
+  const [infoTooltipStatus, setInfoTooltipStatus] = React.useState('');
+  const [isInfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
+  
+  const [email, setEmail] = React.useState('');
+  const [currentPageType, setCurrentPageType] = React.useState('');
 
   useEffect(() => {
     tokenCheck();
-  }, []);
+  }, [loggedIn]);
 
   const tokenCheck = () => {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      auth.getContent(jwt).then((res) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      auth.getContent(token).then((res) => {
         if (res) {
           setLoggedIn(true);
-          setUserData({ _id: res._id, email: res.email });
+          setEmail(res.data.email);
           history.push('/');
         }
       })
     }
   };
+
+  const onRegister = (data) => {
+    auth.register(data.password, data.email).then((res) => {
+      if (!res) {
+        showInfoToolTip('Oops, something went wrong! Please try again.', 'failure');
+      } else {
+        showInfoToolTip('Success! You have now been registered.', 'success');
+      }
+    })
+      .catch(err => console.log(err));
+  }
+
+  const onLogin = (data) => {
+    auth.authorize(data.password, data.email).then((res) => {
+      if (!res) {
+        showInfoToolTip('Oops, something went wrong! Please try again.', 'failure');
+      }
+      if (res.token) {
+        setLoggedIn(true);
+        history.push('/');
+      }
+    })
+      .catch(err => console.log(err));
+  }
+
+  const onSignOut = () => {
+    setEmail('');
+    setLoggedIn(false);
+    localStorage.removeItem('token');
+    history.push('/signin');
+  }
+
+  const showInfoToolTip = (message, status) => {
+    setInfoTooltipMessage(message);
+    setInfoTooltipStatus(status);
+    setInfoTooltipOpen(true);
+  }
 
   const onAddPlace = () => {
     addPopupKeyListener();
@@ -93,16 +135,60 @@ function App() {
 
   return (
     <div className='page'>
-      <Header loggedIn={loggedIn} />
+      <Header loggedIn={loggedIn} onSignOut={onSignOut} email={email} currentPageType={currentPageType} />
       <Switch>
-        <ProtectedRoute exact path='/' loggedIn={loggedIn} component={Main}/>
-        <Route path='/signup'><Register /></Route>
-        <Route path='/signin'><Login /></Route>
+        <ProtectedRoute exact path='/' 
+          loggedIn={loggedIn}
+          onCardClick={onCardClick}
+          handleAddPlaceClick={onAddPlace}
+          handleEditAvatarClick={onEditAvatar}
+          handleEditProfileClick={onEditProfile}
+          component={Main} />
+        <Route path='/signup'><Register onRegister={onRegister} setCurrentPageType={setCurrentPageType} /></Route>
+        <Route path='/signin'><Login onLogin={onLogin} setCurrentPageType={setCurrentPageType} /></Route>
         <Route>
           {loggedIn ? <Redirect to='/' /> : <Redirect to='/signin' />}
         </Route>
       </Switch>
       <Footer />
+
+      <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} onPopupBackgroundClick={onPopupBackgroundClick} />
+
+      <PopupWithForm name='profile' title='Edit profile' isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick}>
+        <div className='popup__field'>
+          <input id='profile-name' type='text' name='name' className='popup__input popup__input_type_name' placeholder='Name' required minLength='2' maxLength='40' />
+          <span id='profile-name-error' className='popup__error'></span>
+        </div>
+
+        <div className='popup__field'>
+          <input id='profile-about' type='text' name='about' className='popup__input popup__input_type_about' placeholder='About me' required minLength='2' maxLength='200' />
+          <span id='profile-about-error' className='popup__error'></span>
+        </div>
+      </PopupWithForm>
+
+      <PopupWithForm name='confirm' title='Are you sure?' isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} />
+
+      <PopupWithForm name='avatar' title='Change profile picture' isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} >
+        <div className='popup__field'>
+          <input id='avatar-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required />
+          <span id='avatar-url-error' className='popup__error'></span>
+        </div>
+      </PopupWithForm>
+
+      <PopupWithForm name='new-card' title='New Place' isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} >
+        <div className='popup__field'>
+          <input id='card-title' type='text' name='title' className='popup__input popup__input_type_title' placeholder='Title' required minLength='1' maxLength='30' />
+          <span id='card-title-error' className='popup__error'></span>
+        </div>
+
+        <div className='popup__field'>
+          <input id='card-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required />
+          <span id='card-url-error' className='popup__error'></span>
+        </div>
+      </PopupWithForm>
+
+      <InfoTooltip message={infoTooltipMessage} isOpen={isInfoTooltipOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} iconStatus={infoTooltipStatus} ></InfoTooltip>
+
     </div>
   )
 }

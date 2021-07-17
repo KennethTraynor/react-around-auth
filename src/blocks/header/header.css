@@ -1,5 +1,6 @@
 @import url(__logo/header__logo.css);
-@import url(__logout-button/header__logout-button.css);
+@import url(__user-state-button/header__user-state-button.css);
+@import url(__user-state-button/_type/header__user-state-button_type_logout.css);
 @import url(__email/header__email.css);
 @import url(__info-container/header__info-container.css);
 

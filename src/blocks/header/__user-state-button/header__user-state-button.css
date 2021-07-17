@@ -1,4 +1,4 @@
-.header__logout-button {
+.header__user-state-button {
     margin: 0;
     padding: 0;
     color: white;
@@ -12,6 +12,6 @@
     text-decoration: none;
 }
 
-.header__logout-button:hover {
+.header__user-state-button:hover {
     opacity: 60%;
 }
