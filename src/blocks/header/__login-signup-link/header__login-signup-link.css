@@ -1,4 +1,4 @@
-.header__user-state-button {
+.header__login-signup-link {
     margin: 0;
     padding: 0;
     color: white;
@@ -12,6 +12,17 @@
     text-decoration: none;
 }
 
-.header__user-state-button:hover {
+.header__login-signup-link:hover {
     opacity: 60%;
 }
+
+
+@media screen and (max-width: 920px) {
+  
+    .header__login-signup-link {
+        font-size: 14px;
+        line-height: 16.94px;
+    }
+
+}
+  

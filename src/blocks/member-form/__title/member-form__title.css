@@ -7,3 +7,14 @@
     line-height: 29.05px;
     color: white;
 }
+
+@media screen and (max-width: 424px) {
+  
+    .member-form__title {
+      margin-bottom: 40px;
+      font-size: 20px;
+      line-height: 24.2px;
+    }
+
+}
+  

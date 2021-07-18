@@ -1,0 +1,9 @@
+@media screen and (max-width: 920px) {
+
+    .header__email_type_bar  {
+      display: none;
+      width: 80%;
+    }
+  
+}
+  

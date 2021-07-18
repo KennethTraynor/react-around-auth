@@ -14,10 +14,10 @@
     border-bottom: solid 1px white;
 }
 
-.member-form__input:last-child {
+.member-form__input:last-of-type {
     margin-bottom: 0;
 }
 
 .member-form__input::placeholder {
     color: #cccccc;
-  }
+}

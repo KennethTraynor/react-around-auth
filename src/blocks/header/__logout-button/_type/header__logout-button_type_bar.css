@@ -1,0 +1,8 @@
+@media screen and (max-width: 920px) {
+
+    .header__logout-button_type_bar  {
+      display: none;
+    }
+  
+}
+  

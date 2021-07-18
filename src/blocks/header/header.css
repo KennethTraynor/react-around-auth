@@ -1,23 +1,23 @@
 @import url(__logo/header__logo.css);
-@import url(__user-state-button/header__user-state-button.css);
-@import url(__user-state-button/_type/header__user-state-button_type_logout.css);
+@import url(__logout-button/header__logout-button.css);
+@import url(__login-signup-link/header__login-signup-link.css);
 @import url(__email/header__email.css);
 @import url(__info-container/header__info-container.css);
+@import url(__container/header__container.css);
+@import url(__above-info/header__above-info.css);
+@import url(__email/_type/header__email_type_above.css);
+@import url(__email/_type/header__email_type_bar.css);
+@import url(__logout-button/_type/header__logout-button_type_bar.css);
+@import url(__above-info/_visible/header__above-info_visible.css);
+@import url(__menu-button/header__menu-button.css);
+@import url(__menu-button/_active/header__menu-button_active.css);
 
 .header {
-  margin: 45px auto 0 auto;
+  margin: 0 auto 0 auto;
   padding: 0;
   box-sizing: border-box;
   border-bottom: 1px solid rgba(84, 84, 84, 0.7);
   width: 100%;
   display: flex;
-  flex-direction: row;
-}
-
-@media screen and (max-width: 1023px) {
-
-  .header {
-    margin: 28px auto 0 auto;
-  }
-
+  flex-direction: column;
 }
