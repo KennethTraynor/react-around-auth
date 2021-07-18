@@ -1,14 +1,14 @@
 @import url(__logo/header__logo.css);
 @import url(__logout-button/header__logout-button.css);
+@import url(__logout-button/_type/header__logout-button_type_bar.css);
 @import url(__login-signup-link/header__login-signup-link.css);
-@import url(__email/header__email.css);
 @import url(__info-container/header__info-container.css);
-@import url(__container/header__container.css);
-@import url(__above-info/header__above-info.css);
+@import url(__email/header__email.css);
 @import url(__email/_type/header__email_type_above.css);
 @import url(__email/_type/header__email_type_bar.css);
-@import url(__logout-button/_type/header__logout-button_type_bar.css);
-@import url(__above-info/_visible/header__above-info_visible.css);
+@import url(__container/header__container.css);
+@import url(__above-info-container/header__above-info-container.css);
+@import url(__above-info-container/_visible/header__above-info-container_visible.css);
 @import url(__menu-button/header__menu-button.css);
 @import url(__menu-button/_active/header__menu-button_active.css);
 

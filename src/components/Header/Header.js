@@ -19,7 +19,7 @@ function Header({ loggedIn, email, onSignOut, currentPageType }) {
     return (
         <header className='header'>
             {loggedIn &&
-                <div className={`header__above-info ${isAboveInfoVisible ? 'header__above-info_visible' : ''}`}>
+                <div className={`header__above-info-container ${isAboveInfoVisible ? 'header__above-info-container_visible' : ''}`}>
                     <p className='header__email header__email_type_above'>{email}</p>
                     <button className='header__logout-button header__logout-button_type_above' onClick={onSignOut}>Log Out</button>
                 </div>

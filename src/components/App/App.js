@@ -8,15 +8,16 @@ import ImagePopup from '../ImagePopup/ImagePopup';
 import AddPlacePopup from '../AddPlacePopup/AddPlacePopup';
 import EditAvatarPopup from '../EditAvatarPopup/EditAvatarPopup';
 import EditProfilePopup from '../EditProfilePopup/EditProfilePopup';
+import ConfirmPopup from '../ConfirmPopup/ConfirmPopup';
 import Footer from '../Footer/Footer';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
 import InfoTooltip from '../InfoTooltip/InfoTooltip';
 import * as auth from '../../auth';
 import api from '../../utils/Api';
-import ConfirmPopup from '../ConfirmPopup/ConfirmPopup';
 
 function App() {
+
   const history = useHistory();
 
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
@@ -56,14 +57,14 @@ function App() {
           history.push('/');
         }
       })
+        .catch((err) => console.log(err));
     }
   };
 
   const getCards = () => {
     api.getInitialCards()
-      .then((res) => {
-        setCards(res.map(item => (createCardElement(item))))
-      })
+      .then((res) => setCards(res.map(item => (createCardElement(item)))))
+      .catch((err) => console.log(err))
   }
 
   const onRegister = (data) => {
@@ -74,25 +75,25 @@ function App() {
         showInfoTooltip('Success! You have now been registered.', 'success');
       }
     })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }
 
   const onLogin = (data) => {
     auth.authorize(data.password, data.email).then((res) => {
       if (!res) {
         showInfoTooltip('Oops, something went wrong! Please try again.', 'failure');
-      }
-      if (res.token) {
+      } else if (res.token) {
         setLoggedIn(true);
         history.push('/');
       }
     })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }
 
   const onSignOut = () => {
-    setEmail('');
     setLoggedIn(false);
+    setEmail('');
+    setCurrentUser({ userName: '', userDescription: '', userAvatar: '', userId: '' });
     localStorage.removeItem('token');
     history.push('/signin');
   }
@@ -102,6 +103,7 @@ function App() {
       .then((res) => {
         setCurrentUser(currentUser => ({ ...currentUser, userName: res.name, userDescription: res.about, userAvatar: res.avatar, userId: res._id }))
       })
+      .catch((err) => console.log(err))
   }
 
   const showInfoTooltip = (message, status) => {
@@ -170,33 +172,36 @@ function App() {
   }
 
   const handleAddPlace = (data) => {
-    api.addCard({ name: data.title, link: data.url }).then(
-      (res) => setCards(cards => [createCardElement(res), ...cards])
-    ).then(() => closeAllPopups())
+    api.addCard({ name: data.title, link: data.url })
+      .then((res) => setCards(cards => [createCardElement(res), ...cards]))
+      .then(() => closeAllPopups())
+      .catch((err) => console.log(err))
   }
 
   const handleUpdateAvatar = (data) => {
-    api.setUserAvatar({ avatar: data.url }).then(
-      (res) => setCurrentUser(currentUser => ({ ...currentUser, userAvatar: res.avatar }))
-    ).then(() => closeAllPopups())
+    api.setUserAvatar({ avatar: data.url })
+      .then((res) => setCurrentUser(currentUser => ({ ...currentUser, userAvatar: res.avatar })))
+      .then(() => closeAllPopups())
+      .catch((err) => console.log(err))
   }
 
   const handleUpdateProfile = (data) => {
-    api.setUserInfo({ name: data.name, about: data.about }).then(
-      (res) => setCurrentUser(currentUser => ({ ...currentUser, userName: res.name, userDescription: res.about }))
-    ).then(() => closeAllPopups())
+    api.setUserInfo({ name: data.name, about: data.about })
+      .then((res) => setCurrentUser(currentUser => ({ ...currentUser, userName: res.name, userDescription: res.about })))
+      .then(() => closeAllPopups())
+      .catch((err) => console.log(err))
   }
 
   const onCardLikeClick = (card) => {
     const liked = card.likes.some((e) => e._id === currentUser.userId);
-    api.updateCardLike({ cardID: card.id, like: !liked }).then(
-      (res) => {
+    api.updateCardLike({ cardID: card.id, like: !liked })
+      .then((res) => {
         const newCards = [...cards];
         const index = cards.indexOf(card);
         newCards[index] = createCardElement(res);
         setCards(newCards);
-      }
-    )
+      })
+      .catch((err) => console.log(err))
   }
 
   const onCardDeleteClick = (card) => {
@@ -205,9 +210,10 @@ function App() {
   }
 
   const handleConfirmDelete = () => {
-    api.deleteCard({ cardID: selectedCard.id }).then(
-      () => setCards(cards.filter(c => c.id !== selectedCard.id))
-    ).then(() => closeAllPopups())
+    api.deleteCard({ cardID: selectedCard.id })
+      .then(() => setCards(cards.filter(c => c.id !== selectedCard.id)))
+      .then(() => closeAllPopups())
+      .catch((err) => console.log(err))
   }
 
   return (
