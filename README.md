@@ -8,7 +8,7 @@ This project uses React for creating the front-end, it now also includes authori
 
 * Forms are used to send and store information on a server
 
-* Responsive CSS layouts to allow for smaller screens to have a better experience
+* Responsive CSS layouts allowing smaller screens to have a better experience
 
 * Registering and Logging In
 
