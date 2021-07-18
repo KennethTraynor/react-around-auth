@@ -37,7 +37,7 @@ function AddPlacePopup({isOpen, onClose, onPopupBackgroundClick, handleAddPlace}
     }
 
     return (
-        <PopupWithForm name='new-card' title='New Place' isOpen={isOpen} onClose={onClose} onPopupBackgroundClick={onPopupBackgroundClick} handleSubmit={handleSubmit} >
+        <PopupWithForm name='new-card' title='New Place' submitText='Create' isOpen={isOpen} onClose={onClose} onPopupBackgroundClick={onPopupBackgroundClick} handleSubmit={handleSubmit} >
             <div className='popup__field'>
                 <input id='card-title' type='text' name='title' className='popup__input popup__input_type_title' placeholder='Title' required minLength='1' maxLength='30' onChange={handleChange} />
                 <span id='card-title-error' className='popup__error'></span>

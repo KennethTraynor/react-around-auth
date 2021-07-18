@@ -29,7 +29,7 @@ function EditProfilePopup({isOpen, onClose, onPopupBackgroundClick, handleUpdate
     }
 
     return (
-        <PopupWithForm name='profile' title='Edit profile' isOpen={isOpen} onClose={onClose} onPopupBackgroundClick={onPopupBackgroundClick} handleSubmit={handleSubmit}>
+        <PopupWithForm name='profile' title='Edit profile' submitText='Save' isOpen={isOpen} onClose={onClose} onPopupBackgroundClick={onPopupBackgroundClick} handleSubmit={handleSubmit}>
             <div className='popup__field'>
                 <input id='profile-name' type='text' name='name' className='popup__input popup__input_type_name' placeholder='Name' required minLength='2' maxLength='40' onChange={handleChange} />
                 <span id='profile-name-error' className='popup__error'></span>

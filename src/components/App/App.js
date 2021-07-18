@@ -15,6 +15,7 @@ import Register from '../Register/Register';
 import InfoTooltip from '../InfoTooltip/InfoTooltip';
 import * as auth from '../../auth';
 import api from '../../utils/Api';
+import ConfirmPopup from '../ConfirmPopup/ConfirmPopup';
 
 function App() {
   const history = useHistory();
@@ -200,8 +201,13 @@ function App() {
   }
 
   const onCardDeleteClick = (card) => {
-    api.deleteCard({cardID: card.id}).then(
-      (res) => setCards(cards.filter(c => c.id !== card.id ))
+    setSelectedCard(card);
+    setConfirmPopupOpen(true);
+  }
+
+  const handleConfirmDelete = () => {
+    api.deleteCard({cardID: selectedCard.id}).then(
+      () => setCards(cards.filter(c => c.id !== selectedCard.id ))
     )
   }
 
@@ -209,6 +215,7 @@ function App() {
     <div className='page'>
       <CurrentUserContext.Provider value={{ currentUser }}>
         <Header loggedIn={loggedIn} onSignOut={onSignOut} email={email} currentPageType={currentPageType} />
+
         <Switch>
           <ProtectedRoute exact path='/'
             loggedIn={loggedIn}
@@ -220,27 +227,22 @@ function App() {
             onCardLikeClick={onCardLikeClick}
             onCardDeleteClick={onCardDeleteClick}
             component={Main} />
-          <Route path='/signup'>
-            <Register onRegister={onRegister} setCurrentPageType={setCurrentPageType} />
-          </Route>
-          <Route path='/signin'>
-            <Login onLogin={onLogin} setCurrentPageType={setCurrentPageType} />
-          </Route>
-          <Route>
-            {loggedIn ? <Redirect to='/' /> : <Redirect to='/signin' />}
-          </Route>
+          <Route path='/signup'><Register onRegister={onRegister} setCurrentPageType={setCurrentPageType} /></Route>
+          <Route path='/signin'><Login onLogin={onLogin} setCurrentPageType={setCurrentPageType} /></Route>
+          <Route>{loggedIn ? <Redirect to='/' /> : <Redirect to='/signin' />}</Route>
         </Switch>
+
         <Footer />
 
         <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} onPopupBackgroundClick={onPopupBackgroundClick} />
-
-        <PopupWithForm name='confirm' title='Are you sure?' isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} />
 
         <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleAddPlace={handleAddPlace} />
 
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleUpdateAvatar={handleUpdateAvatar} />
 
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleUpdateProfile={handleUpdateProfile} />
+
+        <ConfirmPopup isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleConfirm={handleConfirmDelete} />
 
         <InfoTooltip message={infoTooltipMessage} isOpen={isInfoTooltipOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} iconStatus={infoTooltipStatus} ></InfoTooltip>
       </CurrentUserContext.Provider>

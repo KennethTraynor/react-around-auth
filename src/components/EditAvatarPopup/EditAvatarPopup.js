@@ -26,7 +26,7 @@ function EditAvatarPopup({isOpen, onClose, onPopupBackgroundClick, handleUpdateA
 
 
     return (
-        <PopupWithForm name='avatar' title='Change profile picture' isOpen={isOpen} onClose={onClose} onPopupBackgroundClick={onPopupBackgroundClick} handleSubmit={handleSubmit} >
+        <PopupWithForm name='avatar' title='Change profile picture' submitText='Save' isOpen={isOpen} onClose={onClose} onPopupBackgroundClick={onPopupBackgroundClick} handleSubmit={handleSubmit} >
             <div className='popup__field'>
                 <input id='avatar-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required onChange={handleChange} />
                 <span id='avatar-url-error' className='popup__error'></span>
