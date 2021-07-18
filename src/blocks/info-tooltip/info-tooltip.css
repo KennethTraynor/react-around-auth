@@ -4,6 +4,7 @@
 @import url(__message/info-tooltip__message.css);
 
 .info-tooltip {
-    margin: auto;
+    margin: 0;
     padding: 0;
 }
+  

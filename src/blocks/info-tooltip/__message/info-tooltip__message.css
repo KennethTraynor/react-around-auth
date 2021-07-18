@@ -1,6 +1,18 @@
 .info-tooltip__message {
+    margin: 0;
+    padding: 0;
     font-size: 24px;
     font-weight: 900;
     line-height: 29.05px;
     text-align: center;
 }
+
+@media screen and (max-width: 424px) {
+  
+    .info-tooltip__message {
+        font-size: 20px;
+        line-height: 24.2px;
+    }
+
+}
+  

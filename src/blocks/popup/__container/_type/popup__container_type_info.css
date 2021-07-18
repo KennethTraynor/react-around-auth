@@ -1,0 +1,17 @@
+.popup__container_type_info {
+    margin: 0;
+    padding: 60px 36px 60px 36px;
+    background-color: white;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+  
+@media screen and (max-width: 424px) {
+
+    .popup__container_type_info {
+        padding: 50px 18px 50px 18px;
+        margin: 0 20px 0 20px;
+    }
+
+}
+  
