@@ -4,7 +4,6 @@ import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
-import PopupWithForm from '../PopupWithForm/PopupWithForm';
 import ImagePopup from '../ImagePopup/ImagePopup';
 import AddPlacePopup from '../AddPlacePopup/AddPlacePopup';
 import EditAvatarPopup from '../EditAvatarPopup/EditAvatarPopup';
@@ -25,6 +24,7 @@ function App() {
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
   const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
+  const [isInfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
 
   const [selectedCard, setSelectedCard] = React.useState({});
 
@@ -32,11 +32,10 @@ function App() {
 
   const [infoTooltipMessage, setInfoTooltipMessage] = React.useState('');
   const [infoTooltipStatus, setInfoTooltipStatus] = React.useState('');
-  const [isInfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
 
-  const [email, setEmail] = React.useState('');
   const [currentPageType, setCurrentPageType] = React.useState('');
 
+  const [email, setEmail] = React.useState('');
   const [currentUser, setCurrentUser] = React.useState({ userName: '', userDescription: '', userAvatar: '', userId: '' });
 
   const [cards, setCards] = React.useState([]);
@@ -173,30 +172,30 @@ function App() {
   const handleAddPlace = (data) => {
     api.addCard({ name: data.title, link: data.url }).then(
       (res) => setCards(cards => [createCardElement(res), ...cards])
-    )
+    ).then(() => closeAllPopups())
   }
 
   const handleUpdateAvatar = (data) => {
     api.setUserAvatar({ avatar: data.url }).then(
       (res) => setCurrentUser(currentUser => ({ ...currentUser, userAvatar: res.avatar }))
-    )
+    ).then(() => closeAllPopups())
   }
 
   const handleUpdateProfile = (data) => {
     api.setUserInfo({ name: data.name, about: data.about }).then(
       (res) => setCurrentUser(currentUser => ({ ...currentUser, userName: res.name, userDescription: res.about }))
-    )
+    ).then(() => closeAllPopups())
   }
 
   const onCardLikeClick = (card) => {
     const liked = card.likes.some((e) => e._id === currentUser.userId);
-    api.updateCardLike({cardID: card.id, like: !liked}).then(
+    api.updateCardLike({ cardID: card.id, like: !liked }).then(
       (res) => {
         const newCards = [...cards];
         const index = cards.indexOf(card);
         newCards[index] = createCardElement(res);
         setCards(newCards);
-      }   
+      }
     )
   }
 
@@ -206,9 +205,9 @@ function App() {
   }
 
   const handleConfirmDelete = () => {
-    api.deleteCard({cardID: selectedCard.id}).then(
-      () => setCards(cards.filter(c => c.id !== selectedCard.id ))
-    )
+    api.deleteCard({ cardID: selectedCard.id }).then(
+      () => setCards(cards.filter(c => c.id !== selectedCard.id))
+    ).then(() => closeAllPopups())
   }
 
   return (
@@ -234,15 +233,17 @@ function App() {
 
         <Footer />
 
-        <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} onPopupBackgroundClick={onPopupBackgroundClick} />
+        {loggedIn && <>
+          <ImagePopup isOpen={isImagePopupOpen} onClose={closeAllPopups} card={selectedCard} onPopupBackgroundClick={onPopupBackgroundClick} />
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleAddPlace={handleAddPlace} />
+          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleAddPlace={handleAddPlace} />
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleUpdateAvatar={handleUpdateAvatar} />
+          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleUpdateAvatar={handleUpdateAvatar} />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleUpdateProfile={handleUpdateProfile} />
+          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleUpdateProfile={handleUpdateProfile} />
 
-        <ConfirmPopup isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleConfirm={handleConfirmDelete} />
+          <ConfirmPopup isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} handleConfirm={handleConfirmDelete} />
+        </>}
 
         <InfoTooltip message={infoTooltipMessage} isOpen={isInfoTooltipOpen} onClose={closeAllPopups} onPopupBackgroundClick={onPopupBackgroundClick} iconStatus={infoTooltipStatus} ></InfoTooltip>
       </CurrentUserContext.Provider>

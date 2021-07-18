@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PopupWithForm from "../PopupWithForm/PopupWithForm";
 
 function EditAvatarPopup({isOpen, onClose, onPopupBackgroundClick, handleUpdateAvatar}) {
 
     const [url, setUrl] = React.useState('');
 
+    useEffect(() => {
+        setUrl('');
+    }, [isOpen])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,11 +27,10 @@ function EditAvatarPopup({isOpen, onClose, onPopupBackgroundClick, handleUpdateA
         handleUpdateAvatar({url});
     }
 
-
     return (
         <PopupWithForm name='avatar' title='Change profile picture' submitText='Save' isOpen={isOpen} onClose={onClose} onPopupBackgroundClick={onPopupBackgroundClick} handleSubmit={handleSubmit} >
             <div className='popup__field'>
-                <input id='avatar-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required onChange={handleChange} />
+                <input id='avatar-url' type='url' name='url' className='popup__input popup__input_type_image-url' placeholder='Image Link' required value={url} onChange={handleChange} />
                 <span id='avatar-url-error' className='popup__error'></span>
             </div>
         </PopupWithForm>
