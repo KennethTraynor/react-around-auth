@@ -75,7 +75,10 @@ function App() {
         showInfoTooltip('Success! You have now been registered.', 'success');
       }
     })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        showInfoTooltip('Oops, something went wrong! Please try again.', 'failure');
+      });
   }
 
   const onLogin = (data) => {
@@ -87,7 +90,10 @@ function App() {
         history.push('/');
       }
     })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err)
+        showInfoTooltip('Oops, something went wrong! Please try again.', 'failure');
+      });
   }
 
   const onSignOut = () => {
