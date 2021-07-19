@@ -8,15 +8,7 @@ export const register = (password, email) => {
         },
         body: JSON.stringify({ password, email })
     })
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-            }
-        })
-        .then((data) => {
-            return data;
-        })
-        .catch((err) => console.log(err));
+        .then((res) => handleResponse(res))
 };
 
 export const authorize = (password, email) => {
@@ -27,16 +19,15 @@ export const authorize = (password, email) => {
         },
         body: JSON.stringify({ password, email })
     })
-        .then((response) => response.json())
+        .then((res) => handleResponse(res))
         .then((data) => {
             if (data.token) {
                 localStorage.setItem('token', data.token);
                 return data;
             } else {
-                return;
+                return Promise.reject(data);
             }
         })
-        .catch((err) => console.log(err));
 };
 
 export const getContent = (token) => {
@@ -47,7 +38,12 @@ export const getContent = (token) => {
             'Authorization': `Bearer ${token}`,
         }
     })
-        .then(res => res.json())
-        .then(data => data)
-        .catch((err) => console.log(err));
+        .then((res) => handleResponse(res))
+}
+
+const handleResponse = (res) => {
+    if (res.ok) {
+        return res.json();
+    }
+    return Promise.reject(res);
 }

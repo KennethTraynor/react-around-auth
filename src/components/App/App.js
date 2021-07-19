@@ -13,7 +13,7 @@ import Footer from '../Footer/Footer';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
 import InfoTooltip from '../InfoTooltip/InfoTooltip';
-import * as auth from '../../auth';
+import * as auth from '../../utils/auth';
 import api from '../../utils/Api';
 
 function App() {

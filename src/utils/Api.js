@@ -9,7 +9,7 @@ class Api {
       headers: this._headers
     })
       .then(res => {
-        return this._handleRespone(res)
+        return this._handleResponse(res)
       })
 
   }
@@ -19,7 +19,7 @@ class Api {
       headers: this._headers
     })
       .then(res => {
-        return this._handleRespone(res)
+        return this._handleResponse(res)
       })
   }
 
@@ -33,7 +33,7 @@ class Api {
       })
     })
       .then(res => {
-        return this._handleRespone(res)
+        return this._handleResponse(res)
       })
   }
 
@@ -43,7 +43,7 @@ class Api {
       method: 'DELETE'
     })
       .then(res => {
-        return this._handleRespone(res)
+        return this._handleResponse(res)
       })
   }
 
@@ -54,7 +54,7 @@ class Api {
       method: like ? 'PUT' : 'DELETE'
     })
       .then(res => {
-        return this._handleRespone(res)
+        return this._handleResponse(res)
       })
 
   }
@@ -69,7 +69,7 @@ class Api {
       })
     })
       .then(res => {
-        return this._handleRespone(res)
+        return this._handleResponse(res)
       })
   }
 
@@ -82,11 +82,11 @@ class Api {
       })
     })
       .then(res => {
-        return this._handleRespone(res)
+        return this._handleResponse(res)
       })
   }
 
-  _handleRespone(res) {
+  _handleResponse(res) {
     if (res.ok) {
       return res.json();
     }
