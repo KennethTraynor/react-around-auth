@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
@@ -150,11 +150,11 @@ function App() {
     }
   }
 
-  const onPopupKeyPress = (e) => {
-    if (e.keyCode === 27) {
+  const onPopupKeyPress = useCallback((e) => {
+    if (e.key === 'Escape') {
       closeAllPopups();
     }
-  };
+  }, []);
 
   const addPopupKeyListener = () => {
     document.addEventListener('keydown', onPopupKeyPress, false);
